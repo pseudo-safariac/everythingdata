@@ -1,0 +1,9 @@
+.venv/  # virtual environment
+.env/
+*.env
+*.log   # log files
+*.db
+# **/*.csv   # I choose to ignore this file since it has the data that is the base to the entire project
+.vscode/
+__pycache__/
+
