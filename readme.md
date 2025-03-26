@@ -1,67 +1,76 @@
+# Table of Contents
+- [Introduction to the Project](#introduction-to-the-project)
+- [Problem Statement](#problem-statement)
+- [Objectives](#objectives)
+- [Data and Methodology](#data-and-methodology)
+    - [Data Overview](#data-overview)
+    - [Handling Categorical Data](#handling-categorical-data)
+    - [Checking Dataset Integrity](#checking-dataset-integrity)
+    - [Data Conversion](#data-conversion)
+- [Achieving Objectives](#achieving-objectives)
+    - [Shopper Demographics](#shopper-demographics)
+- [References](#references)
+
 # Introduction to the Project
-I chose a project from **Kaggle** and you can download it from [here](https://www.kaggle.com/datasets/logiccraftbyhimanshi/walmart-customer-purchase-behavior-dataset). This project is created as part of the coursework in [everythingdata][everythingdata-link] where I have to showcase my expertise in the data science course that I have been talking, which was a joint facilitation between [everythingdata][everythingdata-link] and [DataCamp][datacamp-link].
+I chose a project from **Kaggle**, and you can download it from [here](https://www.kaggle.com/datasets/logiccraftbyhimanshi/walmart-customer-purchase-behavior-dataset). This project is created as part of the coursework in [everythingdata][everythingdata-link], where I have to showcase my expertise in data science. The coursework is a joint facilitation between [everythingdata][everythingdata-link] and [DataCamp][datacamp-link].
 
-A big shoutout to both [everythingdata][everythingdata-link] and [DataCamp][datacamp-link] for helping me get the education and classes.
+A big shoutout to both [everythingdata][everythingdata-link] and [DataCamp][datacamp-link] for providing the education and resources.
 
-## Objectives on the project
-1. Use the data to find what demographic shops the most products -> Shopper demographics
-2. Find what is the businest time and dates to shop -> Peak shopping times
-3. Find out if most shoppers just go for the discounts or are frequest shoppers who simply need a product and got the discount as a bonus -> Discount influences
-4. Relate what cities have shoppers with the most similar items purchased -> Shopping trends in cities
-5. Find out if shoppers of similar products give a consistent Rating to indicate product quality -> Product ratings
-6. Group products purchased by age and show what age group loves to shop similar items and if they prefer to get discounts -> Product prefences by age group
-7. Check the different modes of payment by age groups -> Payment preferences
+# Problem Statement
+Understanding consumer behavior is essential for businesses to optimize marketing strategies, inventory management, and overall customer satisfaction. This project aims to analyze customer purchasing patterns using a dataset of Walmart transactions to extract insights into demographics, shopping trends, and discount effectiveness.
 
-## Project Exploration Details
+# Objectives
+1. Identify the demographic group that shops the most -> **Shopper demographics**
+2. Determine the busiest shopping times and dates -> **Peak shopping times**
+3. Analyze whether discounts attract more buyers or if customers shop based on necessity -> **Discount influences**
+4. Examine shopping trends in various cities -> **City-based shopping trends**
+5. Evaluate if customers consistently rate similar products the same -> **Product ratings**
+6. Analyze product preferences by age group and discount impact -> **Product preferences by age**
+7. Explore different payment methods preferred by various age groups -> **Payment preferences**
 
-I chose to include the CSV dataset since I needed the project to be as air-gapped as possible and not require an internet connection after a `git pull`.
+## Data and Methodology
 
-I first started with data exploration, as seen in the jupyter notebook. This is also the very first time I am using notebooks so please bear with me.
+### Data Overview
 
-The dataset contains 12 columns and had 5,000 rows, and they were all found to have the expected dataset.
+The dataset consists of **12 columns** and **50,000 rows**. It contains essential customer transaction data:
 
-The original columns in the datasaet were:
 ```python
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 50000 entries, 0 to 49999
 Data columns (total 12 columns):
  #   Column            Non-Null Count  Dtype  
 ---  ------            --------------  -----  
- 0   Customer_ID       50000 non-null  object 
+ 0   Customer_ID       50000 non-null  object
  1   Age               50000 non-null  int64  
- 2   Gender            50000 non-null  object 
- 3   City              50000 non-null  object 
- 4   Category          50000 non-null  object 
- 5   Product_Name      50000 non-null  object 
- 6   Purchase_Date     50000 non-null  object 
+ 2   Gender            50000 non-null  object
+ 3   City              50000 non-null  object
+ 4   Category          50000 non-null  object
+ 5   Product_Name      50000 non-null  object
+ 6   Purchase_Date     50000 non-null  object
  7   Purchase_Amount   50000 non-null  float64
- 8   Payment_Method    50000 non-null  object 
- 9   Discount_Applied  50000 non-null  object 
- 10  Rating            50000 non-null  int64  
- 11  Repeat_Customer   50000 non-null  object 
+ 8   Payment_Method    50000 non-null  object
+ 9   Discount_Applied  50000 non-null  object
+10   Rating            50000 non-null  int64  
+11   Repeat_Customer   50000 non-null  object
 dtypes: float64(1), int64(2), object(9)
 memory usage: 4.6+ MB
 ```
 
-I started with numerical columns `['Age', 'Rating', 'Purchase_Amount']`:
+## Data Cleaning and Preprocessing
 
-The results showed that the columns were complete and with no missing.
+### Handling Categorical Data
+Some categorical columns needed modifications:
+- **Customer_ID** was removed as it was not useful for analysis.
+- **Purchase_Date** was converted to a proper `datetime` format.
+- A unique **id** was assigned as the index.
 
-#### Categorical Data
+### Checking Dataset Integrity
+- Identified **367 duplicate dates**.
+- Conducted **boxplot analysis** for outliers (none found).
+- Verified missing values and ensured data consistency.
 
-The other types of data *(categorical data)* gave info that indicated that I should create my own id system since the one they used was not helpful for my case, and I tested the `Purchase_Date` column and found that I needed to convert it into valid a `datetime` object that I can then use.
-
-> Note that I also did a `df = df.copy()` so that the edits I make can be reflected on the df var I have been pointing at in memory
-
-#### Checking Dataset
-
-For simplicity of use, I briefly created an id column and set it as index, I found 367 days that were duplicated, I checked using boxplots for outliers and I saw none.
-
-#### Converting Columns to integers
-
-I also converted `['Gender', 'Category', 'Product_Date', 'Payment_Method', 'Discount_Applied', 'Repeat_Customer']` to `int` so that I can use the values to gain more information about the dataset and also inporporate machine learning later on.
-
-Sample Data that was converted into `int` includes:
+### Data Conversion
+To facilitate modeling and analysis, categorical values were mapped to integers:
 ```python
 category_mapping = {
     "Electronics": 0,
@@ -83,9 +92,10 @@ payment_mapping = {
     "UPI": 3
 }
 ```
-This is going to be useful as a reference later on and it is easier written on the notes.
 
-All these changes made my new df to have the following types:
+This transformation aids in numerical analysis and machine learning applications.
+
+### Updated Data Types
 ```python
 <class 'pandas.core.frame.DataFrame'>
 Index: 50000 entries, 1 to 50000
@@ -102,22 +112,33 @@ Data columns (total 12 columns):
  7   Purchase_Amount   50000 non-null  float64       
  8   Payment_Method    50000 non-null  int64         
  9   Discount_Applied  50000 non-null  int64         
- 10  Rating            50000 non-null  int64         
- 11  Repeat_Customer   50000 non-null  int64         
+10   Rating            50000 non-null  int64         
+11   Repeat_Customer   50000 non-null  int64         
 dtypes: datetime64[ns](1), float64(1), int64(7), object(3)
 memory usage: 5.0+ MB
 ```
-### Achieving Objectives
-#### Shopper Demograpghics
 
-I now started achieving my objectives by starting by finding the relationships in shopper demographics.
+> **Exploratory Data Analysis (EDA)** : 
+The Exploratory Data Analysis (EDA) has been a countinuous and parallel process that is ongoing simultaneously with the dataset cleaning and pre-processing, ensuring that the data doesn't have missing or wrong data types, enhance data visualizations to communicate findings etc.
+
+## Modeling and Predicative Analysis
 
 
-## References
+# Achieving Objectives
+## Shopper Demographics
+- Conducted an **exploratory data analysis (EDA)** to visualize and understand shopper demographics.
+- Used **pivot tables** to compare purchase behavior across different groups.
 
+I used pivot_tables to show relationships between different data columns starting with `Age` and its association with other factors such as `Gender`.
+
+This showed that people of all genders were spending equal amounts of money on shopping and also that they were of the same spread as shown by the pie chart.
+
+
+
+# References
 1. [EverythingData][everythingdata-link]
 2. [DataCamp][datacamp-link]  
 
-
 [everythingdata-link]: [https://www/example.com] "Link is Missing"
 [datacamp-link]: https://www.datacamp.com/ "Landing page of DataCamp"
+
